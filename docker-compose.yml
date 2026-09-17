@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: docker-command-center
+    restart: unless-stopped
+    ports:
+      # Mapujemy ruch: Port na zewnątrz (malina) 5174, Port wewnątrz kontenera (Nginx) 80
+      - "5174:80"
+    environment:
+      - NODE_ENV=production

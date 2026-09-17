@@ -1,32 +1,58 @@
-# React + TypeScript + Vite
+# Docker Command Center 🚀 (WSB Merito Lab)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Interaktywna platforma szkoleniowa stworzona dla studentów do nauki Dockera i konteneryzacji. Zbudowana w stylu sci-fi / cyberpunk (z inspiracjami z gier takich jak StarCraft), oferuje immersyjne doświadczenie edukacyjne, symulację terminala i modułową prezentację wiedzy.
 
-Currently, two official plugins are available:
+## 🌟 Główne funkcjonalności
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Moduł Prezentacji (Odprawa):** Interaktywne slajdy tłumaczące kluczowe pojęcia konteneryzacji z zaawansowanymi schematami (Kluczowe różnice Kontenery vs VM, Architektura Spotify/Netflix).
+- **Zarządzanie Misjami:** System zadań edukacyjnych (np. Hello Web, Dockerfile, Sieci).
+- **Symulator Terminala (Preloader):** Boot-screen wprowadzający w nastrój cyber-bezpieczeństwa.
+- **Optymalizacja dla ARM (Raspberry Pi):** Wbudowane wsparcie do hostowania platformy we własnej infrastrukturze na lekkich urządzeniach.
 
-## React Compiler
+## 🛠️ Stos technologiczny
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend:** React 18, TypeScript
+- **Stylizacja:** Tailwind CSS
+- **Animacje:** Framer Motion
+- **Ikony:** Lucide React
+- **Budowanie:** Vite
+- **Wdrożenie:** Docker (Multi-stage build) + Nginx
 
-## Expanding the Oxlint configuration
+## 💻 Uruchomienie lokalne (Dev)
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Aby uruchomić aplikację w trybie deweloperskim na swoim komputerze:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+```bash
+# 1. Zainstaluj zależności
+npm install
+
+# 2. Uruchom serwer lokalny
+npm run dev
+```
+Aplikacja będzie dostępna pod adresem: `http://localhost:5173`
+
+## 🐳 Wdrożenie produkcyjne (Docker / Raspberry Pi)
+
+Repozytorium posiada gotowy plik `Dockerfile` (multi-stage) oraz `docker-compose.yml`, zoptymalizowane pod architekturę ARM (Raspberry Pi) i x86.
+Obraz używa bardzo lekkiego serwera Nginx do serwowania zbudowanych plików statycznych.
+
+Aby uruchomić aplikację w środowisku produkcyjnym:
+
+```bash
+# Uruchomienie kontenera w tle (na domyślnym porcie 5174)
+docker-compose up -d --build
+```
+
+### Konfiguracja Reverse Proxy (Caddy)
+
+Jeśli korzystasz z Caddy na serwerze (np. na malinie z IP `192.168.162.210`), dodaj poniższy blok do pliku `Caddyfile`:
+
+```caddy
+docker.zarnecki.org {
+    reverse_proxy 192.168.162.210:5174
 }
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 🏗️ Budowanie pod GitHub Pages
+
+Aplikacja jest również kompatybilna z GitHub Pages (wdrażana do ścieżki `/dfn/`). Podczas budowy obrazu Docker (`Dockerfile`) ścieżka bazowa jest automatycznie podmieniana na `/`, co pozwala na serwowanie aplikacji bezpośrednio pod korzeniem własnej domeny.

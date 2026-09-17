@@ -1,14 +1,17 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Cpu, Book, Rocket, AlertTriangle } from 'lucide-react';
+import { Terminal, Cpu, Book, Rocket, AlertTriangle, MonitorPlay } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Missions from './components/Missions';
 import Archives from './components/Archives';
 import Troubleshooting from './components/Troubleshooting';
+import Presentation from './components/Presentation';
+import Preloader from './components/Preloader';
 
 const TOTAL_TASKS = 18; // sum of all mission tasks
 
 function App() {
+  const [booting, setBooting] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [fxVariant, setFxVariant] = useState(1); // 1 = mocny, 2 = średni, 3 = słaby
 
@@ -54,9 +57,15 @@ function App() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#04060a] text-[#8e98b0] font-sans selection:bg-cyan-900 overflow-hidden flex flex-col relative">
+    <>
+      <AnimatePresence>
+        {booting && <Preloader onComplete={() => setBooting(false)} />}
+      </AnimatePresence>
       
-      {/* ZOPTYMALIZOWANE TŁO SCI-FI (POTATO-PC FRIENDLY) */}
+      {!booting && (
+        <div className="h-screen w-screen bg-[#04060a] text-[#8e98b0] font-sans selection:bg-cyan-900 overflow-hidden flex flex-col relative">
+          
+          {/* ZOPTYMALIZOWANE TŁO SCI-FI (POTATO-PC FRIENDLY) */}
       
       {/* 1. Tło kosmosu - statyczne i bez kosztownego mix-blend-screen */}
       <div 
@@ -115,6 +124,7 @@ function App() {
           <nav className="flex gap-2">
             {[
               { id: 'dashboard', icon: <Cpu size={18} />, label: 'Odprawa' },
+              { id: 'presentation', icon: <MonitorPlay size={18} />, label: 'Szkolenie' },
               { id: 'missions', icon: <Terminal size={18} />, label: 'Misje' },
               { id: 'archives', icon: <Book size={18} />, label: 'Archiwum' },
               { id: 'sos', icon: <AlertTriangle size={18} />, label: 'SOS' }
@@ -200,6 +210,7 @@ function App() {
               className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-10 w-full h-full min-h-0"
             >
               {activeTab === 'dashboard' && <Dashboard onStart={() => changeTab('missions')} completedCount={completedCount} totalTasks={TOTAL_TASKS} />}
+              {activeTab === 'presentation' && <Presentation />}
               {activeTab === 'missions' && <Missions completedTasks={completedTasks} toggleTask={toggleTask} />}
               {activeTab === 'archives' && <Archives />}
               {activeTab === 'sos' && <Troubleshooting />}
@@ -221,8 +232,10 @@ function App() {
           </span>
           <span><span className="text-cyan-700">ENCRYPTION:</span> ENABLED</span>
         </div>
-      </footer>
-    </div>
+        </footer>
+      </div>
+      )}
+    </>
   );
 }
 
