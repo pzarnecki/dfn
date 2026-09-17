@@ -1,0 +1,55 @@
+/* Animations - separate from Tailwind to avoid purging */
+
+.hologram-scanline {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(to bottom, rgba(6,182,212,0) 0%, rgba(6,182,212,0.1) 50%, rgba(6,182,212,0) 100%);
+  background-size: 100% 4px;
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.2s linear infinite;
+}
+
+.bg-nebula { animation: space-pan 60s ease-in-out infinite alternate; }
+.bg-grid   { animation: grid-move 20s linear infinite; }
+.bg-reactor { animation: pulse-glow 8s ease-in-out infinite alternate; }
+.shimmer-bar { animation: shimmer 2s infinite; }
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes glitch {
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-2px, 1px); }
+  40%  { transform: translate(-1px, -1px); }
+  60%  { transform: translate(2px, 1px); }
+  80%  { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+/* POTATO-PC FRIENDLY ANIMATIONS */
+@keyframes grid-move {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-40px, -40px); }
+}
+
+@keyframes pulse-glow {
+  0%   { opacity: 0.05; }
+  100% { opacity: 0.25; }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Restore missing classes! */
+.bg-grid { animation: grid-move 4s linear infinite; }
+.bg-reactor { animation: pulse-glow 4s ease-in-out infinite alternate; }
