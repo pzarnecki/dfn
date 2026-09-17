@@ -1,58 +1,101 @@
-# Docker Command Center 🚀 (WSB Merito Lab)
+# Docker Command Center (WSB Merito Lab)
 
-Interaktywna platforma szkoleniowa stworzona dla studentów do nauki Dockera i konteneryzacji. Zbudowana w stylu sci-fi / cyberpunk (z inspiracjami z gier takich jak StarCraft), oferuje immersyjne doświadczenie edukacyjne, symulację terminala i modułową prezentację wiedzy.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#)
+[![React](https://img.shields.io/badge/React-18.x-blue)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF)](https://vitejs.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)](https://www.docker.com/)
 
-## 🌟 Główne funkcjonalności
+Platforma edukacyjna typu Single Page Application (SPA) zbudowana dla studentów kierunków informatycznych w celu interaktywnej nauki konteneryzacji (Docker) oraz podstaw architektury sieciowej. 
 
-- **Moduł Prezentacji (Odprawa):** Interaktywne slajdy tłumaczące kluczowe pojęcia konteneryzacji z zaawansowanymi schematami (Kluczowe różnice Kontenery vs VM, Architektura Spotify/Netflix).
-- **Zarządzanie Misjami:** System zadań edukacyjnych (np. Hello Web, Dockerfile, Sieci).
-- **Symulator Terminala (Preloader):** Boot-screen wprowadzający w nastrój cyber-bezpieczeństwa.
-- **Optymalizacja dla ARM (Raspberry Pi):** Wbudowane wsparcie do hostowania platformy we własnej infrastrukturze na lekkich urządzeniach.
+Interfejs aplikacji wykorzystuje gamifikację oraz stylistykę dark-mode/cyberpunk, dostarczając zintegrowane narzędzia m.in. terminal w przeglądarce, interaktywne schematy architektury systemowej (porównania VM vs Kontenery) oraz zbiór zautomatyzowanych misji technicznych.
 
-## 🛠️ Stos technologiczny
+## Spis treści
 
-- **Frontend:** React 18, TypeScript
-- **Stylizacja:** Tailwind CSS
-- **Animacje:** Framer Motion
+- [Wymagania wstępne](#wymagania-wstępne)
+- [Architektura](#architektura)
+- [Struktura projektu](#struktura-projektu)
+- [Uruchomienie lokalne (Development)](#uruchomienie-lokalne-development)
+- [Wdrożenie (Production / Self-hosted)](#wdrożenie-production--self-hosted)
+- [Publikacja na GitHub Pages](#publikacja-na-github-pages)
+
+## Wymagania wstępne
+
+Aby uruchomić projekt lokalnie lub zbudować obraz, wymagane są:
+- [Node.js](https://nodejs.org/) (v18.0.0 lub nowszy)
+- [npm](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/) oraz [Docker Compose](https://docs.docker.com/compose/) (w przypadku wdrożenia na własnym serwerze)
+
+## Architektura
+
+Projekt oparty jest o nowoczesny stos frontendowy:
+- **Core:** React 18 z TypeScriptem (Strict Mode)
+- **Bundler:** Vite (zoptymalizowany proces budowania statycznych paczek)
+- **Stylizacja:** Tailwind CSS v3
+- **Animacje:** Framer Motion (zależności fizyczne i modale z zachowaniem stanów)
 - **Ikony:** Lucide React
-- **Budowanie:** Vite
-- **Wdrożenie:** Docker (Multi-stage build) + Nginx
 
-## 💻 Uruchomienie lokalne (Dev)
+## Struktura projektu
 
-Aby uruchomić aplikację w trybie deweloperskim na swoim komputerze:
+```text
+├── Dockerfile             # Multi-stage build (Node.js -> Nginx) dla x86/ARM
+├── docker-compose.yml     # Konfiguracja środowiska kontenerowego
+├── nginx.conf             # Konfiguracja routingu Nginx pod SPA (fallback do index.html)
+├── package.json           # Definicje zależności i skryptów
+├── src/
+│   ├── App.tsx            # Główny router i zarządzanie stanem aplikacji
+│   ├── index.css          # Globalne style Tailwind i dyrektywy CSS
+│   ├── main.tsx           # Punkt wejścia React DOM
+│   └── components/
+│       ├── Preloader.tsx  # Ekran bootowania aplikacji (symulacja konsoli)
+│       ├── Presentation.tsx # Zbiór slajdów i wizualizacji (VM vs Docker)
+│       ├── Missions.tsx   # Definicje zadań oraz tutoriale do Dockera
+│       └── ...            # Pozostałe moduły UI
+└── vite.config.ts         # Konfiguracja bundlera
+```
+
+## Uruchomienie lokalne (Development)
+
+Proces uruchamia serwer deweloperski z Hot Module Replacement (HMR).
 
 ```bash
-# 1. Zainstaluj zależności
+# Sklonuj repozytorium
+git clone https://github.com/pzarnecki/dfn.git
+cd dfn
+
+# Zainstaluj zależności
 npm install
 
-# 2. Uruchom serwer lokalny
+# Uruchom serwer developerski
 npm run dev
 ```
-Aplikacja będzie dostępna pod adresem: `http://localhost:5173`
 
-## 🐳 Wdrożenie produkcyjne (Docker / Raspberry Pi)
+Aplikacja domyślnie nasłuchuje na porcie `5173`.
 
-Repozytorium posiada gotowy plik `Dockerfile` (multi-stage) oraz `docker-compose.yml`, zoptymalizowane pod architekturę ARM (Raspberry Pi) i x86.
-Obraz używa bardzo lekkiego serwera Nginx do serwowania zbudowanych plików statycznych.
+## Wdrożenie (Production / Self-hosted)
 
-Aby uruchomić aplikację w środowisku produkcyjnym:
+Platforma zawiera wsparcie dla architektury **ARM (np. Raspberry Pi)** oraz x86_64, używając lekkiego obrazu `nginx:alpine` do serwowania wybudowanych (zminifikowanych) plików statycznych.
+
+### 1. Budowa i uruchomienie z Docker Compose
+
+Domyślna konfiguracja mapuje port `5174` na maszynie hosta do portu `80` w kontenerze. Uruchom polecenie:
 
 ```bash
-# Uruchomienie kontenera w tle (na domyślnym porcie 5174)
 docker-compose up -d --build
 ```
 
-### Konfiguracja Reverse Proxy (Caddy)
+### 2. Reverse Proxy (Caddy)
 
-Jeśli korzystasz z Caddy na serwerze (np. na malinie z IP `192.168.162.210`), dodaj poniższy blok do pliku `Caddyfile`:
+Jeśli środowiskiem docelowym jest serwer korzystający z Caddy, dodaj poniższy blok do pliku konfiguracyjnego `Caddyfile`. Pamiętaj, aby zmodyfikować adres IP zgodnie z ustawieniami własnej sieci:
 
 ```caddy
+# Serwowanie aplikacji na subdomenie, kierowanie ruchu do kontenera Dockera
 docker.zarnecki.org {
     reverse_proxy 192.168.162.210:5174
 }
 ```
 
-## 🏗️ Budowanie pod GitHub Pages
+## Publikacja na GitHub Pages
 
-Aplikacja jest również kompatybilna z GitHub Pages (wdrażana do ścieżki `/dfn/`). Podczas budowy obrazu Docker (`Dockerfile`) ścieżka bazowa jest automatycznie podmieniana na `/`, co pozwala na serwowanie aplikacji bezpośrednio pod korzeniem własnej domeny.
+Skrypty wewnątrz repozytorium (domyślny base path: `/dfn/` w `vite.config.ts`) pozwalają na publikację aplikacji jako statycznej witryny na GitHub Pages.
+
+W przypadku wdrożenia przez Docker (`Dockerfile`), flaga `--base` jest automatycznie przepisywana na `/` (root level domeny) podczas etapu budowania (Build Stage), co gwarantuje kompatybilność obu środowisk bez konfliktów ścieżek URL.
