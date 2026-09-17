@@ -83,14 +83,30 @@ Domyślna konfiguracja mapuje port `5174` na maszynie hosta do portu `80` w kont
 docker-compose up -d --build
 ```
 
-### 2. Reverse Proxy (Caddy)
+### 2. Reverse Proxy
 
-Jeśli środowiskiem docelowym jest serwer korzystający z Caddy, dodaj poniższy blok do pliku konfiguracyjnego `Caddyfile`. Pamiętaj, aby zmodyfikować adres IP zgodnie z ustawieniami własnej sieci:
+Jeśli środowiskiem docelowym jest własny serwer korzystający z reverse proxy, należy przekierować ruch z domeny na port wyeksponowany przez kontener. Poniżej znajdują się przykładowe konfiguracje.
+
+#### Przykład Caddy (`Caddyfile`):
 
 ```caddy
-# Serwowanie aplikacji na subdomenie, kierowanie ruchu do kontenera Dockera
-docker.zarnecki.org {
-    reverse_proxy 192.168.162.210:5174
+twoja-domena.pl {
+    reverse_proxy 127.0.0.1:5174
+}
+```
+
+#### Przykład Nginx:
+
+```nginx
+server {
+    listen 80;
+    server_name twoja-domena.pl;
+
+    location / {
+        proxy_pass http://127.0.0.1:5174;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 }
 ```
 
